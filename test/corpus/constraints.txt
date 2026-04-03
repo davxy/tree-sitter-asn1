@@ -1,0 +1,98 @@
+==================
+Value range and size constraints
+==================
+
+TestModule DEFINITIONS ::= BEGIN
+  MyRange ::= INTEGER (0..255)
+  MySized ::= OCTET STRING (SIZE(0..64))
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (ModuleBody
+      (AssignmentList
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (IntegerType
+                  (INTEGER)))
+              (Constraint
+                (ConstraintSpec
+                  (SubtypeConstraint
+                    (ElementSetSpecs
+                      (RootElementSetSpec
+                        (ElementSetSpec
+                          (Unions
+                            (Intersections
+                              (IntersectionElements
+                                (Elements
+                                  (SubtypeElements
+                                    (ValueRange
+                                      (LowerEndpoint
+                                        (LowerEndValue
+                                          (Value
+                                            (BuiltinValue
+                                              (IntegerValue
+                                                (SignedNumber
+                                                  (number)))))))
+                                      (UpperEndpoint
+                                        (UpperEndValue
+                                          (Value
+                                            (BuiltinValue
+                                              (IntegerValue
+                                                (SignedNumber
+                                                  (number))))))))))))))))))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (OctetStringType
+                  (OCTET)
+                  (STRING)))
+              (Constraint
+                (ConstraintSpec
+                  (SubtypeConstraint
+                    (ElementSetSpecs
+                      (RootElementSetSpec
+                        (ElementSetSpec
+                          (Unions
+                            (Intersections
+                              (IntersectionElements
+                                (Elements
+                                  (SubtypeElements
+                                    (SizeConstraint
+                                      (SIZE)
+                                      (Constraint
+                                        (ConstraintSpec
+                                          (SubtypeConstraint
+                                            (ElementSetSpecs
+                                              (RootElementSetSpec
+                                                (ElementSetSpec
+                                                  (Unions
+                                                    (Intersections
+                                                      (IntersectionElements
+                                                        (Elements
+                                                          (SubtypeElements
+                                                            (ValueRange
+                                                              (LowerEndpoint
+                                                                (LowerEndValue
+                                                                  (Value
+                                                                    (BuiltinValue
+                                                                      (IntegerValue
+                                                                        (SignedNumber
+                                                                          (number)))))))
+                                                              (UpperEndpoint
+                                                                (UpperEndValue
+                                                                  (Value
+                                                                    (BuiltinValue
+                                                                      (IntegerValue
+                                                                        (SignedNumber
+                                                                          (number))))))))))))))))))))))))))))))))))))
+    (END)))

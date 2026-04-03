@@ -92,4 +92,10 @@
 (identifier) @variable
 (modulereference) @variable
 (number) @number
+(realnumber) @number
+(cstring) @string
+(bstring) @string
+(hstring) @string
 (ObjectIdentifierType) @type
+"::=" @operator
+".." @operator

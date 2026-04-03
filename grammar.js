@@ -12,50 +12,76 @@ module.exports = grammar({
 
   word: $ => $.yellcased_identifier,
 
-  // TODO: Is this going to slow down the parser a lot or cause errors?
+  // ASN.1 has inherent ambiguities (especially in { ... } value forms)
+  // that require GLR conflict declarations to resolve.
   conflicts: $ => [
+    // Token-level: identifier patterns overlap
+    [$.uppercased_identifier, $.modulereference],
+    [$.lowercased_identifier, $.valuereference],
+
+    // Type reference ambiguities (all-caps names match multiple patterns)
     [$.UsefulType, $.DefinedType],
+    [$.DefinedObjectClass, $.DefinedType, $.UsefulType],
+    [$.DefinedObjectClass, $.DefinedType],
+    [$.Literal, $.DefinedType, $.UsefulType],
     [$.objectsetreference, $.ExternalTypeReference],
     [$.objectsetreference, $.DefinedType, $.UsefulType],
-    [$.NameForm, $.objectreference],
-    [$.BitStringValue, $.SequenceValue, $.SequenceOfValue, $.SetValue, $.SetOfValue],
-    [$.ObjIdComponents, $.SignedNumber],
-    [$.ObjIdComponents, $.SignedNumber, $.NumberForm],
-    [$.SignedNumber, $.Group, $.TableColumn],
-    [$.RestrictedCharacterStringValue, $.CharsDefn], // TODO: I feel like this can be fixed.
-    [$.EnumeratedValue, $.NamedValue],
-    [$.EnumeratedValue, $.IdentifierList],
+    [$.objectsetreference, $.DefinedType],
 
-    // TODO: AI generated these. Review if these are needed.
-    [$.ReferencedValue, $.CharsDefn],
-    [$.ValueList, $.Setting],
-    [$.ValueFromObject, $.ObjectSetFromObjects, $.ObjectFromObject, $.TypeFromObject],
-    [$.ComponentValueList, $.NamedValueList],
-    [$.ObjectSetElements, $.Setting],
-    [$.BitStringValue, $.OctetStringValue],
-    [$.Setting, $.TypeConstraint],
-    [$.ObjectSetElements, $.Setting],
-    [$.ObjectSetElements, $.ComponentRelationConstraint],
-    [$.ElementSetSpecs, $.ObjectSetSpec],
-    [$.ObjIdComponents, $.NumberForm],
-    [$.ExtensionAdditions, $.ExtensionAdditionList],
-    [$.BitStringType],
+    // Value form ambiguities: { ... } can be sequence, set, OID, bit string, etc.
+    [$.BitStringValue, $.SequenceValue, $.SequenceOfValue, $.SetValue, $.SetOfValue],
     [$.SequenceValue, $.SetValue],
     [$.SequenceOfValue, $.SetOfValue],
-    [$.ValueList, $.Setting],
+    [$.BitStringValue, $.OctetStringValue],
+
+    // Identifier inside { ... } values: multiple rules compete for the same token
+    [$.ObjIdComponents, $.EnumeratedValue, $.NamedValue, $.objectreference, $.DefinedValue, $.RelativeOIDComponents, $.NumberForm],
+    [$.ObjIdComponents, $.EnumeratedValue, $.IdentifierList, $.objectreference, $.DefinedValue, $.RelativeOIDComponents, $.NumberForm],
+    [$.ObjIdComponents, $.NamedValue, $.objectreference, $.DefinedValue, $.RelativeOIDComponents, $.NumberForm],
+    [$.ObjIdComponents, $.DefinedValue, $.objectreference, $.NumberForm],
+    [$.ObjIdComponents, $.DefinedValue, $.RelativeOIDComponents, $.NumberForm],
+    [$.ObjIdComponents, $.DefinedValue, $.NumberForm],
+    [$.ObjIdComponents, $.RelativeOIDComponents, $.NumberForm],
+    [$.ObjIdComponents, $.NamedValue, $.RelativeOIDComponents, $.NumberForm],
+    [$.ObjIdComponents, $.EnumeratedValue, $.IdentifierList, $.RelativeOIDComponents, $.NumberForm, $.DefinedValue],
+    [$.ObjIdComponents, $.SignedNumber, $.NumberForm],
+    [$.ObjIdComponents, $.NumberForm],
+    [$.ObjIdComponents, $.NameAndNumberForm],
+    [$.ObjIdComponents, $.ExternalValueReference],
+    [$.RelativeOIDComponents, $.NumberForm],
+    [$.DefinedValue, $.EnumeratedValue, $.NamedValue, $.objectreference],
+    [$.DefinedValue, $.EnumeratedValue, $.IdentifierList, $.objectreference],
+    [$.DefinedValue, $.EnumeratedValue, $.objectreference],
+    [$.DefinedValue, $.EnumeratedValue],
+    [$.DefinedValue, $.EnumeratedValue, $.IdentifierList],
+    [$.DefinedValue, $.objectreference],
+    [$.SignedNumber, $.Group, $.TableColumn],
+
+    // Constraint and value set ambiguities
+    [$.RestrictedCharacterStringValue, $.CharsDefn],
+    [$.ReferencedValue, $.CharsDefn],
     [$.SingleValue, $.Setting, $.ValueList],
+    [$.ValueList, $.Setting],
+    [$.ActualParameter, $.ValueList],
+    [$.Setting, $.TypeConstraint],
+    [$.ElementSetSpecs, $.ObjectSetSpec],
+    [$.ComponentValueList, $.NamedValueList],
+
+    // Object/type from object ambiguities
+    [$.ValueFromObject, $.ObjectSetFromObjects, $.ObjectFromObject, $.TypeFromObject],
     [$.ValueFromObject, $.ObjectFromObject, $.TypeFromObject],
     [$.ValueFromObject, $.TypeFromObject],
-    [$.Group, $.TableColumn],
     [$.ValueFromObject, $.ObjectFromObject],
-    [$.ReferencedValue, $.RelativeOIDComponents, $.NumberForm, $.CharsDefn],
-    [$.ReferencedValue, $.RelativeOIDComponents, $.NumberForm],
-    [$.SignedNumber, $.NumberForm],
-    [$.RelativeOIDComponents, $.NumberForm],
-    [$.ObjIdComponents, $.ExternalValueReference],
-    [$.ObjIdComponents, $.DefinedValue],
     [$.ReferencedObjects, $.Object],
-    [$.objectsetreference, $.DefinedType],
+    [$.ObjectSetElements, $.Setting],
+    [$.ObjectSetElements, $.ComponentRelationConstraint],
+
+    // Structural ambiguities
+    [$.ExtensionAdditions, $.ExtensionAdditionList],
+    [$.BitStringType],
+    [$.Group, $.TableColumn],
+
+    // XML value ambiguities
     [$.XMLTypedValue, $.XMLValueOrEmpty],
     [$.XMLValueList],
     [$.XMLNamedValue, $.XMLValueOrEmpty, $.XMLChoiceValue],
@@ -75,7 +101,6 @@ module.exports = grammar({
   rules: {
     source_file: $ => repeat($.ModuleDefinition),
 
-    // TODO: This should prevent terminal hyphens. Apply it to other identifiers.
     yellcased_identifier: $ => /[A-Z][A-Z0-9]*(-[A-Z0-9]+)*/,
 
     uppercased_identifier: $ => /[A-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*/,
@@ -200,11 +225,11 @@ module.exports = grammar({
     ),
 
     EncodingReferenceDefault: $ => seq(
-      $.INSTRUCTIONS,
       $.encodingreference,
+      $.INSTRUCTIONS,
     ),
 
-    encodingreference: $ => /[A-Z][A-Z0-9\-]+/,
+    encodingreference: $ => /[A-Z][A-Z0-9]*/,
 
     ModuleIdentifier: $ => prec.right(seq(
       $.modulereference,
@@ -221,21 +246,19 @@ module.exports = grammar({
     DefinitiveObjIdComponentList: $ => repeat1($.DefinitiveObjIdComponent),
 
     DefinitiveObjIdComponent: $ => choice(
-      // $.NameForm,
+      $.NameForm,
       $.DefinitiveNumberForm,
       $.DefinitiveNameAndNumberForm,
     ),
 
     NameForm: $ => $.lowercased_identifier,
     DefinitiveNumberForm: $ => $.number,
-    DefinitiveNameAndNumberForm: $ => prec.right(seq(
+    DefinitiveNameAndNumberForm: $ => seq(
       $.lowercased_identifier,
-      optional(seq(
-        '(',
-        $.DefinitiveNumberForm,
-        ')',
-      )),
-    )),
+      '(',
+      $.DefinitiveNumberForm,
+      ')',
+    ),
 
     IRIValue: $ => seq(
       '"',
@@ -245,8 +268,8 @@ module.exports = grammar({
 
     FirstArcIdentifier: $ => seq('/', $.ArcIdentifier),
 
-    modulereference: $ => /[A-Z][a-zA-Z0-9-]*/,
-    valuereference: $ => /[a-z][a-zA-Z0-9-]*/,
+    modulereference: $ => /[A-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*/,
+    valuereference: $ => /[a-z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*/,
 
     TagDefault: $ => choice(
       seq($.EXPLICIT, $.TAGS),
@@ -300,7 +323,7 @@ module.exports = grammar({
     //   | objectclassreference
     //   | objectreference
     //   | objectsetreference
-    Reference: $ => /[a-zA-Z][a-zA-Z0-9\-]*/,
+    Reference: $ => /[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*/,
   
     Imports: $ => prec.right(seq(
       $.IMPORTS,
@@ -328,10 +351,7 @@ module.exports = grammar({
       optional($.AssignedIdentifier),
     )),
 
-    AssignedIdentifier: $ => choice(
-      $.ObjectIdentifierValue,
-      $.DefinedValue,
-    ),
+    AssignedIdentifier: $ => $.ObjectIdentifierValue,
 
     ObjectIdentifierValue: $ => seq('{', $.ObjIdComponentsList, '}'),
 
@@ -339,14 +359,14 @@ module.exports = grammar({
 
     ObjIdComponents: $ => choice(
       $.number,
-      seq($.NameForm, optional(seq('(', $.NumberForm, ')'))),
-      seq($.modulereference, '.', $.valuereference, optional($.ActualParameterList)),
-      seq($.valuereference, optional($.ActualParameterList)),
+      seq($.identifier, optional(seq('(', $.NumberForm, ')'))),
+      seq($.modulereference, '.', $.identifier, optional($.ActualParameterList)),
+      seq($.identifier, optional($.ActualParameterList)),
     ),
 
     DefinedValue: $ => prec.right(seq(
-      optional($.modulereference),
-      $.valuereference,
+      optional(seq($.modulereference, '.')),
+      $.identifier,
       optional($.ActualParameterList),
     )),
 
@@ -548,6 +568,7 @@ module.exports = grammar({
 
     RequiredToken: $ => choice(
       prec(1, $.Literal),
+      alias($.anycased_field_ref, 'PrimitiveFieldName'),
       $.any_identifier,
     ),
 
@@ -563,14 +584,14 @@ module.exports = grammar({
     ),
 
     TypeAssignment: $ => seq(
-      alias($.uppercased_identifier, 'typereference'),
+      choice(alias($.uppercased_identifier, 'typereference'), alias($.yellcased_identifier, 'typereference')),
       optional($.ParameterList),
       '::=',
       $.Type,
     ),
 
     ValueSetTypeAssignment: $ => seq(
-      alias($.uppercased_identifier, 'typereference'),
+      choice(alias($.uppercased_identifier, 'typereference'), alias($.yellcased_identifier, 'typereference')),
       optional($.ParameterList),
       $.Type,
       '::=',
@@ -578,7 +599,7 @@ module.exports = grammar({
     ),
 
     ObjectSetAssignment: $ => seq(
-      alias($.uppercased_identifier, 'objectreference'),
+      choice(alias($.uppercased_identifier, 'objectreference'), alias($.yellcased_identifier, 'objectreference')),
       optional($.ParameterList),
       $.DefinedObjectClass,
       '::=',
@@ -806,7 +827,7 @@ module.exports = grammar({
       $.objectreference
     ),
     
-    objectreference: $ => $.lowercased_identifier,
+    objectreference: $ => $.identifier,
     
     DefinedObjectSet: $ => choice(
       prec(1, $.ExternalObjectSetReference),
@@ -837,12 +858,12 @@ module.exports = grammar({
     RelativeOIDComponents: $ => choice(
       $.NumberForm,
       $.NameAndNumberForm,
-      $.DefinedValue,
+      seq($.identifier, optional($.ActualParameterList)),
     ),
     
     NumberForm: $ => choice(
       $.number,
-      $.DefinedValue
+      seq(optional(seq($.modulereference, '.')), $.identifier, optional($.ActualParameterList)),
     ),
     
     NameAndNumberForm: $ => seq(
@@ -864,7 +885,7 @@ module.exports = grammar({
     
     FirstRelativeArcIdentifier: $ => $.ArcIdentifier,
     
-    ArcIdentifier: $ => /[a-zA-Z0-9][a-zA-Z0-9-]*/,
+    ArcIdentifier: $ => /[a-zA-Z0-9]([a-zA-Z0-9]*(-[a-zA-Z0-9]+)*)*/,
     
     EmbeddedPDVValue: $ => $.SequenceValue,
     
@@ -1001,20 +1022,19 @@ module.exports = grammar({
       '}'
     ),
 
-    Enumerations: $ => choice(
-      $.RootEnumeration,
-      seq($.RootEnumeration, ',', '...', optional($.ExceptionSpec)),
-      seq($.RootEnumeration, ',', '...', optional($.ExceptionSpec), ',', $.AdditionalEnumeration)
-    ),
-
-    RootEnumeration: $ => $.Enumeration,
-
-    AdditionalEnumeration: $ => $.Enumeration,
-
-    Enumeration: $ => prec.right(seq(
+    Enumerations: $ => seq(
       $.EnumerationItem,
-      repeat(seq(',', $.EnumerationItem))
-    )),
+      repeat(seq(',', $.EnumerationItem)),
+      optional(seq(
+        ',', '...',
+        optional($.ExceptionSpec),
+        optional(seq(
+          ',',
+          $.EnumerationItem,
+          repeat(seq(',', $.EnumerationItem))
+        ))
+      ))
+    ),
 
     EnumerationItem: $ => choice(
       $.identifier,
@@ -1590,7 +1610,7 @@ module.exports = grammar({
 
     ComponentIdList: $ => seq(
       $.identifier,
-      repeat1(seq('.', $.identifier))
+      repeat(seq('.', $.identifier))
     ),
 
     ContentsConstraint: $ => choice(
@@ -1609,10 +1629,12 @@ module.exports = grammar({
       '*/'
     ),
 
-    // FIXME: This is not a valid comment, it should be a line comment
+    // NOTE: In the strict spec, '--' also terminates a comment mid-line,
+    // but virtually no real-world ASN.1 relies on that. The '-- to EOL'
+    // behavior matches practical usage and other ASN.1 tools.
     line_comment: $ => token(seq('--', /[^\n]*/)),
 
-    identifier: $ => /[a-zA-Z][a-zA-Z0-9-]*/,
+    identifier: $ => /[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*/,
 
     XMLTypedValue: $ => choice(
       seq('<', $.NonParameterizedTypeName, '>', $.XMLValue, '</', $.NonParameterizedTypeName, '>'),
@@ -1676,7 +1698,7 @@ module.exports = grammar({
     ),
 
     XMLSignedNumber: $ => choice(
-      // $.number,
+      $.number,
       seq('-', $.number)
     ),
 
@@ -1733,7 +1755,10 @@ module.exports = grammar({
 
     xmlhstring: $ => /[0-9A-Fa-f]*/,
 
-    XMLNullValue: $ => '$$$$$BLING_BLING_MISTER_MONEY_BAG$$$$$',
+    // XML null is represented as empty content; this placeholder
+    // token will never appear in real input. Kept to satisfy the
+    // XMLBuiltinValue choice without making the rule optional.
+    XMLNullValue: $ => token(prec(-1, 'XML_NULL_PLACEHOLDER')),
 
     XMLSequenceValue: $ => choice(
       $.XMLComponentValueList,
@@ -1835,17 +1860,17 @@ module.exports = grammar({
 
     DefinedType: $ => prec.right(seq(
       optional($.modulereference),
-      alias($.uppercased_identifier, 'typereference'),
+      choice(alias($.uppercased_identifier, 'typereference'), alias($.yellcased_identifier, 'typereference')),
       optional($.ActualParameterList),
     )),
 
     ExternalTypeReference: $ => seq(
       $.modulereference,
       '.',
-      alias($.uppercased_identifier, 'typereference')
+      choice(alias($.uppercased_identifier, 'typereference'), alias($.yellcased_identifier, 'typereference'))
     ),
 
-    UsefulType: $ => alias($.uppercased_identifier, 'typereference'),
+    UsefulType: $ => choice(alias($.uppercased_identifier, 'typereference'), alias($.yellcased_identifier, 'typereference')),
 
     DummyReference: $ => $.Reference,
   },

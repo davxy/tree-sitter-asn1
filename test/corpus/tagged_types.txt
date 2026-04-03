@@ -1,0 +1,49 @@
+==================
+Tagged types
+==================
+
+TestModule DEFINITIONS ::= BEGIN
+  MyTagged ::= [0] INTEGER
+  MyAppTag ::= [APPLICATION 1] IMPLICIT BOOLEAN
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (ModuleBody
+      (AssignmentList
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (PrefixedType
+                  (TaggedType
+                    (Tag
+                      (ClassNumber
+                        (number)))
+                    (Type
+                      (BuiltinType
+                        (IntegerType
+                          (INTEGER))))))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (PrefixedType
+                  (TaggedType
+                    (Tag
+                      (Class
+                        (APPLICATION))
+                      (ClassNumber
+                        (number)))
+                    (IMPLICIT)
+                    (Type
+                      (BuiltinType
+                        (BooleanType
+                          (BOOLEAN))))))))))))
+    (END)))

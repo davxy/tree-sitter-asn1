@@ -1,0 +1,63 @@
+==================
+Value assignments
+==================
+
+TestModule DEFINITIONS ::= BEGIN
+  myBool BOOLEAN ::= TRUE
+  myInt INTEGER ::= 42
+  myOid OBJECT IDENTIFIER ::= { iso member-body(2) us(840) }
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (ModuleBody
+      (AssignmentList
+        (Assignment
+          (ValueAssignment
+            (Type
+              (BuiltinType
+                (BooleanType
+                  (BOOLEAN))))
+            (Value
+              (BuiltinValue
+                (BooleanValue
+                  (TRUE))))))
+        (Assignment
+          (ValueAssignment
+            (Type
+              (BuiltinType
+                (IntegerType
+                  (INTEGER))))
+            (Value
+              (BuiltinValue
+                (IntegerValue
+                  (SignedNumber
+                    (number)))))))
+        (Assignment
+          (ValueAssignment
+            (Type
+              (BuiltinType
+                (ObjectIdentifierType
+                  (OBJECT)
+                  (IDENTIFIER))))
+            (Value
+              (BuiltinValue
+                (ObjectIdentifierValue
+                  (ObjIdComponentsList
+                    (ObjIdComponents
+                      (identifier))
+                    (ObjIdComponents
+                      (identifier)
+                      (NumberForm
+                        (number)))
+                    (ObjIdComponents
+                      (identifier)
+                      (NumberForm
+                        (number)))))))))))
+    (END)))

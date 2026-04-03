@@ -520,17 +520,17 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "INSTRUCTIONS"
+          "name": "encodingreference"
         },
         {
           "type": "SYMBOL",
-          "name": "encodingreference"
+          "name": "INSTRUCTIONS"
         }
       ]
     },
     "encodingreference": {
       "type": "PATTERN",
-      "value": "[A-Z][A-Z0-9\\-]+"
+      "value": "[A-Z][A-Z0-9]*"
     },
     "ModuleIdentifier": {
       "type": "PREC_RIGHT",
@@ -611,6 +611,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "NameForm"
+        },
+        {
+          "type": "SYMBOL",
           "name": "DefinitiveNumberForm"
         },
         {
@@ -628,42 +632,25 @@
       "name": "number"
     },
     "DefinitiveNameAndNumberForm": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "lowercased_identifier"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "("
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "DefinitiveNumberForm"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": ")"
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "lowercased_identifier"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "DefinitiveNumberForm"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
     },
     "IRIValue": {
       "type": "SEQ",
@@ -697,11 +684,11 @@
     },
     "modulereference": {
       "type": "PATTERN",
-      "value": "[A-Z][a-zA-Z0-9-]*"
+      "value": "[A-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*"
     },
     "valuereference": {
       "type": "PATTERN",
-      "value": "[a-z][a-zA-Z0-9-]*"
+      "value": "[a-z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*"
     },
     "TagDefault": {
       "type": "CHOICE",
@@ -922,7 +909,7 @@
     },
     "Reference": {
       "type": "PATTERN",
-      "value": "[a-zA-Z][a-zA-Z0-9\\-]*"
+      "value": "[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*"
     },
     "Imports": {
       "type": "PREC_RIGHT",
@@ -1025,17 +1012,8 @@
       }
     },
     "AssignedIdentifier": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "ObjectIdentifierValue"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "DefinedValue"
-        }
-      ]
+      "type": "SYMBOL",
+      "name": "ObjectIdentifierValue"
     },
     "ObjectIdentifierValue": {
       "type": "SEQ",
@@ -1073,7 +1051,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "NameForm"
+              "name": "identifier"
             },
             {
               "type": "CHOICE",
@@ -1115,7 +1093,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "valuereference"
+              "name": "identifier"
             },
             {
               "type": "CHOICE",
@@ -1136,7 +1114,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "valuereference"
+              "name": "identifier"
             },
             {
               "type": "CHOICE",
@@ -1164,8 +1142,17 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "modulereference"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "modulereference"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "."
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -1174,7 +1161,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "valuereference"
+            "name": "identifier"
           },
           {
             "type": "CHOICE",
@@ -2040,6 +2027,15 @@
           }
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "anycased_field_ref"
+          },
+          "named": false,
+          "value": "PrimitiveFieldName"
+        },
+        {
           "type": "SYMBOL",
           "name": "any_identifier"
         }
@@ -2087,13 +2083,27 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "uppercased_identifier"
-          },
-          "named": false,
-          "value": "typereference"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "uppercased_identifier"
+              },
+              "named": false,
+              "value": "typereference"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "yellcased_identifier"
+              },
+              "named": false,
+              "value": "typereference"
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -2121,13 +2131,27 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "uppercased_identifier"
-          },
-          "named": false,
-          "value": "typereference"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "uppercased_identifier"
+              },
+              "named": false,
+              "value": "typereference"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "yellcased_identifier"
+              },
+              "named": false,
+              "value": "typereference"
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -2159,13 +2183,27 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "uppercased_identifier"
-          },
-          "named": false,
-          "value": "objectreference"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "uppercased_identifier"
+              },
+              "named": false,
+              "value": "objectreference"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "yellcased_identifier"
+              },
+              "named": false,
+              "value": "objectreference"
+            }
+          ]
         },
         {
           "type": "CHOICE",
@@ -3082,7 +3120,7 @@
     },
     "objectreference": {
       "type": "SYMBOL",
-      "name": "lowercased_identifier"
+      "name": "identifier"
     },
     "DefinedObjectSet": {
       "type": "CHOICE",
@@ -3171,8 +3209,25 @@
           "name": "NameAndNumberForm"
         },
         {
-          "type": "SYMBOL",
-          "name": "DefinedValue"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "ActualParameterList"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -3184,8 +3239,46 @@
           "name": "number"
         },
         {
-          "type": "SYMBOL",
-          "name": "DefinedValue"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "modulereference"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "."
+                    }
+                  ]
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "ActualParameterList"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -3249,7 +3342,7 @@
     },
     "ArcIdentifier": {
       "type": "PATTERN",
-      "value": "[a-zA-Z0-9][a-zA-Z0-9-]*"
+      "value": "[a-zA-Z0-9]([a-zA-Z0-9]*(-[a-zA-Z0-9]+)*)*"
     },
     "EmbeddedPDVValue": {
       "type": "SYMBOL",
@@ -3752,101 +3845,32 @@
       ]
     },
     "Enumerations": {
-      "type": "CHOICE",
+      "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "RootEnumeration"
+          "name": "EnumerationItem"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "RootEnumeration"
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            },
-            {
-              "type": "STRING",
-              "value": "..."
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "ExceptionSpec"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "SYMBOL",
+                "name": "EnumerationItem"
+              }
+            ]
+          }
         },
         {
-          "type": "SEQ",
+          "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "RootEnumeration"
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            },
-            {
-              "type": "STRING",
-              "value": "..."
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "ExceptionSpec"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            },
-            {
-              "type": "SYMBOL",
-              "name": "AdditionalEnumeration"
-            }
-          ]
-        }
-      ]
-    },
-    "RootEnumeration": {
-      "type": "SYMBOL",
-      "name": "Enumeration"
-    },
-    "AdditionalEnumeration": {
-      "type": "SYMBOL",
-      "name": "Enumeration"
-    },
-    "Enumeration": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "EnumerationItem"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
               "type": "SEQ",
               "members": [
                 {
@@ -3854,14 +3878,66 @@
                   "value": ","
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "EnumerationItem"
+                  "type": "STRING",
+                  "value": "..."
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "ExceptionSpec"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": ","
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "EnumerationItem"
+                        },
+                        {
+                          "type": "REPEAT",
+                          "content": {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "STRING",
+                                "value": ","
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "EnumerationItem"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
                 }
               ]
+            },
+            {
+              "type": "BLANK"
             }
-          }
-        ]
-      }
+          ]
+        }
+      ]
     },
     "EnumerationItem": {
       "type": "CHOICE",
@@ -6740,7 +6816,7 @@
           "name": "identifier"
         },
         {
-          "type": "REPEAT1",
+          "type": "REPEAT",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6886,7 +6962,7 @@
     },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-zA-Z][a-zA-Z0-9-]*"
+      "value": "[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*"
     },
     "XMLTypedValue": {
       "type": "CHOICE",
@@ -7104,6 +7180,10 @@
       "type": "CHOICE",
       "members": [
         {
+          "type": "SYMBOL",
+          "name": "number"
+        },
+        {
           "type": "SEQ",
           "members": [
             {
@@ -7305,8 +7385,15 @@
       "value": "[0-9A-Fa-f]*"
     },
     "XMLNullValue": {
-      "type": "STRING",
-      "value": "$$$$$BLING_BLING_MISTER_MONEY_BAG$$$$$"
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": -1,
+        "content": {
+          "type": "STRING",
+          "value": "XML_NULL_PLACEHOLDER"
+        }
+      }
     },
     "XMLSequenceValue": {
       "type": "CHOICE",
@@ -7701,13 +7788,27 @@
             ]
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "uppercased_identifier"
-            },
-            "named": false,
-            "value": "typereference"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "uppercased_identifier"
+                },
+                "named": false,
+                "value": "typereference"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "yellcased_identifier"
+                },
+                "named": false,
+                "value": "typereference"
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -7736,6 +7837,34 @@
           "value": "."
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "uppercased_identifier"
+              },
+              "named": false,
+              "value": "typereference"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "yellcased_identifier"
+              },
+              "named": false,
+              "value": "typereference"
+            }
+          ]
+        }
+      ]
+    },
+    "UsefulType": {
+      "type": "CHOICE",
+      "members": [
+        {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
@@ -7743,17 +7872,17 @@
           },
           "named": false,
           "value": "typereference"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "yellcased_identifier"
+          },
+          "named": false,
+          "value": "typereference"
         }
       ]
-    },
-    "UsefulType": {
-      "type": "ALIAS",
-      "content": {
-        "type": "SYMBOL",
-        "name": "uppercased_identifier"
-      },
-      "named": false,
-      "value": "typereference"
     },
     "DummyReference": {
       "type": "SYMBOL",
@@ -7776,8 +7905,30 @@
   ],
   "conflicts": [
     [
+      "uppercased_identifier",
+      "modulereference"
+    ],
+    [
+      "lowercased_identifier",
+      "valuereference"
+    ],
+    [
       "UsefulType",
       "DefinedType"
+    ],
+    [
+      "DefinedObjectClass",
+      "DefinedType",
+      "UsefulType"
+    ],
+    [
+      "DefinedObjectClass",
+      "DefinedType"
+    ],
+    [
+      "Literal",
+      "DefinedType",
+      "UsefulType"
     ],
     [
       "objectsetreference",
@@ -7789,8 +7940,8 @@
       "UsefulType"
     ],
     [
-      "NameForm",
-      "objectreference"
+      "objectsetreference",
+      "DefinedType"
     ],
     [
       "BitStringValue",
@@ -7800,13 +7951,129 @@
       "SetOfValue"
     ],
     [
+      "SequenceValue",
+      "SetValue"
+    ],
+    [
+      "SequenceOfValue",
+      "SetOfValue"
+    ],
+    [
+      "BitStringValue",
+      "OctetStringValue"
+    ],
+    [
       "ObjIdComponents",
-      "SignedNumber"
+      "EnumeratedValue",
+      "NamedValue",
+      "objectreference",
+      "DefinedValue",
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "EnumeratedValue",
+      "IdentifierList",
+      "objectreference",
+      "DefinedValue",
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "NamedValue",
+      "objectreference",
+      "DefinedValue",
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "DefinedValue",
+      "objectreference",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "DefinedValue",
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "DefinedValue",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "NamedValue",
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "EnumeratedValue",
+      "IdentifierList",
+      "RelativeOIDComponents",
+      "NumberForm",
+      "DefinedValue"
     ],
     [
       "ObjIdComponents",
       "SignedNumber",
       "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "NumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "NameAndNumberForm"
+    ],
+    [
+      "ObjIdComponents",
+      "ExternalValueReference"
+    ],
+    [
+      "RelativeOIDComponents",
+      "NumberForm"
+    ],
+    [
+      "DefinedValue",
+      "EnumeratedValue",
+      "NamedValue",
+      "objectreference"
+    ],
+    [
+      "DefinedValue",
+      "EnumeratedValue",
+      "IdentifierList",
+      "objectreference"
+    ],
+    [
+      "DefinedValue",
+      "EnumeratedValue",
+      "objectreference"
+    ],
+    [
+      "DefinedValue",
+      "EnumeratedValue"
+    ],
+    [
+      "DefinedValue",
+      "EnumeratedValue",
+      "IdentifierList"
+    ],
+    [
+      "DefinedValue",
+      "objectreference"
     ],
     [
       "SignedNumber",
@@ -7818,20 +8085,33 @@
       "CharsDefn"
     ],
     [
-      "EnumeratedValue",
-      "NamedValue"
-    ],
-    [
-      "EnumeratedValue",
-      "IdentifierList"
-    ],
-    [
       "ReferencedValue",
       "CharsDefn"
     ],
     [
+      "SingleValue",
+      "Setting",
+      "ValueList"
+    ],
+    [
       "ValueList",
       "Setting"
+    ],
+    [
+      "ActualParameter",
+      "ValueList"
+    ],
+    [
+      "Setting",
+      "TypeConstraint"
+    ],
+    [
+      "ElementSetSpecs",
+      "ObjectSetSpec"
+    ],
+    [
+      "ComponentValueList",
+      "NamedValueList"
     ],
     [
       "ValueFromObject",
@@ -7840,20 +8120,21 @@
       "TypeFromObject"
     ],
     [
-      "ComponentValueList",
-      "NamedValueList"
+      "ValueFromObject",
+      "ObjectFromObject",
+      "TypeFromObject"
     ],
     [
-      "ObjectSetElements",
-      "Setting"
+      "ValueFromObject",
+      "TypeFromObject"
     ],
     [
-      "BitStringValue",
-      "OctetStringValue"
+      "ValueFromObject",
+      "ObjectFromObject"
     ],
     [
-      "Setting",
-      "TypeConstraint"
+      "ReferencedObjects",
+      "Object"
     ],
     [
       "ObjectSetElements",
@@ -7864,14 +8145,6 @@
       "ComponentRelationConstraint"
     ],
     [
-      "ElementSetSpecs",
-      "ObjectSetSpec"
-    ],
-    [
-      "ObjIdComponents",
-      "NumberForm"
-    ],
-    [
       "ExtensionAdditions",
       "ExtensionAdditionList"
     ],
@@ -7879,73 +8152,8 @@
       "BitStringType"
     ],
     [
-      "SequenceValue",
-      "SetValue"
-    ],
-    [
-      "SequenceOfValue",
-      "SetOfValue"
-    ],
-    [
-      "ValueList",
-      "Setting"
-    ],
-    [
-      "SingleValue",
-      "Setting",
-      "ValueList"
-    ],
-    [
-      "ValueFromObject",
-      "ObjectFromObject",
-      "TypeFromObject"
-    ],
-    [
-      "ValueFromObject",
-      "TypeFromObject"
-    ],
-    [
       "Group",
       "TableColumn"
-    ],
-    [
-      "ValueFromObject",
-      "ObjectFromObject"
-    ],
-    [
-      "ReferencedValue",
-      "RelativeOIDComponents",
-      "NumberForm",
-      "CharsDefn"
-    ],
-    [
-      "ReferencedValue",
-      "RelativeOIDComponents",
-      "NumberForm"
-    ],
-    [
-      "SignedNumber",
-      "NumberForm"
-    ],
-    [
-      "RelativeOIDComponents",
-      "NumberForm"
-    ],
-    [
-      "ObjIdComponents",
-      "ExternalValueReference"
-    ],
-    [
-      "ObjIdComponents",
-      "DefinedValue"
-    ],
-    [
-      "ReferencedObjects",
-      "Object"
-    ],
-    [
-      "objectsetreference",
-      "DefinedType"
     ],
     [
       "XMLTypedValue",

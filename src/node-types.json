@@ -65,21 +65,6 @@
     }
   },
   {
-    "type": "AdditionalEnumeration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "Enumeration",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "AlternativeTypeList",
     "named": true,
     "fields": {},
@@ -129,10 +114,6 @@
       "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "DefinedValue",
-          "named": true
-        },
         {
           "type": "ObjectIdentifierValue",
           "named": true
@@ -1091,11 +1072,11 @@
           "named": true
         },
         {
-          "type": "modulereference",
+          "type": "identifier",
           "named": true
         },
         {
-          "type": "valuereference",
+          "type": "modulereference",
           "named": true
         }
       ]
@@ -1184,6 +1165,10 @@
         {
           "type": "DefinitiveNumberForm",
           "named": true
+        },
+        {
+          "type": "NameForm",
+          "named": true
         }
       ]
     }
@@ -1202,6 +1187,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "DummyGovernor",
+    "named": false,
+    "fields": {}
   },
   {
     "type": "DummyReference",
@@ -1526,21 +1516,6 @@
     }
   },
   {
-    "type": "Enumeration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "EnumerationItem",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "EnumerationItem",
     "named": true,
     "fields": {},
@@ -1568,15 +1543,11 @@
       "required": true,
       "types": [
         {
-          "type": "AdditionalEnumeration",
+          "type": "EnumerationItem",
           "named": true
         },
         {
           "type": "ExceptionSpec",
-          "named": true
-        },
-        {
-          "type": "RootEnumeration",
           "named": true
         }
       ]
@@ -2766,11 +2737,19 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "DefinedValue",
+          "type": "ActualParameterList",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "modulereference",
           "named": true
         },
         {
@@ -2817,11 +2796,11 @@
           "named": true
         },
         {
-          "type": "NameForm",
+          "type": "NumberForm",
           "named": true
         },
         {
-          "type": "NumberForm",
+          "type": "identifier",
           "named": true
         },
         {
@@ -2830,10 +2809,6 @@
         },
         {
           "type": "number",
-          "named": true
-        },
-        {
-          "type": "valuereference",
           "named": true
         }
       ]
@@ -3602,6 +3577,11 @@
     }
   },
   {
+    "type": "Reference",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "ReferencedObjects",
     "named": true,
     "fields": {},
@@ -3713,11 +3693,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "DefinedValue",
+          "type": "ActualParameterList",
           "named": true
         },
         {
@@ -3726,6 +3706,10 @@
         },
         {
           "type": "NumberForm",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -3782,7 +3766,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "Literal",
@@ -3925,21 +3909,6 @@
       "types": [
         {
           "type": "ElementSetSpec",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "RootEnumeration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "Enumeration",
           "named": true
         }
       ]
@@ -5992,6 +5961,17 @@
   {
     "type": "block_comment",
     "named": true,
+    "extra": true,
+    "fields": {}
+  },
+  {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "modulereference",
+    "named": true,
     "fields": {}
   },
   {
@@ -6001,14 +5981,14 @@
   },
   {
     "type": "objectreference",
-    "named": true,
+    "named": false,
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "lowercased_identifier",
+          "type": "identifier",
           "named": true
         }
       ]
@@ -6044,6 +6024,16 @@
         }
       ]
     }
+  },
+  {
+    "type": "typereference",
+    "named": false,
+    "fields": {}
+  },
+  {
+    "type": "uppercased_identifier",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "!",
@@ -6232,10 +6222,6 @@
   {
     "type": "DURATION",
     "named": true
-  },
-  {
-    "type": "DummyGovernor",
-    "named": false
   },
   {
     "type": "EMBEDDED",
@@ -6434,10 +6420,6 @@
     "named": true
   },
   {
-    "type": "Reference",
-    "named": true
-  },
-  {
     "type": "SEQUENCE",
     "named": true
   },
@@ -6574,20 +6556,12 @@
     "named": true
   },
   {
-    "type": "identifier",
-    "named": true
-  },
-  {
     "type": "line_comment",
     "named": true,
     "extra": true
   },
   {
     "type": "lowercased_identifier",
-    "named": true
-  },
-  {
-    "type": "modulereference",
     "named": true
   },
   {
@@ -6627,16 +6601,8 @@
     "named": false
   },
   {
-    "type": "uppercased_identifier",
-    "named": true
-  },
-  {
     "type": "valuefieldreference",
     "named": false
-  },
-  {
-    "type": "valuereference",
-    "named": true
   },
   {
     "type": "valuereference",

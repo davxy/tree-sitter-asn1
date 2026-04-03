@@ -1,0 +1,30 @@
+==================
+Line and block comments
+==================
+
+-- line comment
+TestModule DEFINITIONS ::= BEGIN
+  /* block comment */
+  MyType ::= INTEGER -- trailing comment
+END
+
+---
+
+(source_file
+  (line_comment)
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (block_comment)
+    (ModuleBody
+      (AssignmentList
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (IntegerType
+                  (INTEGER))))))))
+    (line_comment)
+    (END)))
