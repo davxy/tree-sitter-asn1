@@ -1,0 +1,105 @@
+==================
+Basic type assignments
+==================
+
+TestModule DEFINITIONS ::= BEGIN
+  MyBool ::= BOOLEAN
+  MyBits ::= BIT STRING
+  MySeq ::= SEQUENCE { a INTEGER, b BOOLEAN }
+  MyList ::= SEQUENCE OF INTEGER
+  MyChoice ::= CHOICE { a INTEGER, b BOOLEAN }
+  MyEnum ::= ENUMERATED { red, green, blue, ... }
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (ModuleBody
+      (AssignmentList
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (BooleanType
+                  (BOOLEAN))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (BitStringType
+                  (BIT)
+                  (STRING))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (SequenceType
+                  (SEQUENCE)
+                  (ComponentTypeLists
+                    (RootComponentTypeList
+                      (ComponentTypeList
+                        (ComponentType
+                          (NamedType
+                            (identifier)
+                            (Type
+                              (BuiltinType
+                                (IntegerType
+                                  (INTEGER))))))
+                        (ComponentType
+                          (NamedType
+                            (identifier)
+                            (Type
+                              (BuiltinType
+                                (BooleanType
+                                  (BOOLEAN))))))))))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (SequenceOfType
+                  (SEQUENCE)
+                  (OF)
+                  (Type
+                    (BuiltinType
+                      (IntegerType
+                        (INTEGER)))))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (ChoiceType
+                  (CHOICE)
+                  (AlternativeTypeLists
+                    (RootAlternativeTypeList
+                      (AlternativeTypeList
+                        (NamedType
+                          (identifier)
+                          (Type
+                            (BuiltinType
+                              (IntegerType
+                                (INTEGER)))))
+                        (NamedType
+                          (identifier)
+                          (Type
+                            (BuiltinType
+                              (BooleanType
+                                (BOOLEAN)))))))))))))
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (EnumeratedType
+                  (ENUMERATED)
+                  (Enumerations
+                    (EnumerationItem
+                      (identifier))
+                    (EnumerationItem
+                      (identifier))
+                    (EnumerationItem
+                      (identifier))))))))))
+    (END)))

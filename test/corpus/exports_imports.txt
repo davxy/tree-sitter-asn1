@@ -1,0 +1,62 @@
+==================
+Exports and imports with OID
+==================
+
+TestModule DEFINITIONS ::= BEGIN
+  EXPORTS ALL;
+  IMPORTS
+    TypeA, TypeB FROM OtherModule { 1 2 3 }
+    TypeC FROM ThirdModule;
+  MyType ::= INTEGER
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (ModuleBody
+      (Exports
+        (EXPORTS)
+        (ALL))
+      (Imports
+        (IMPORTS)
+        (SymbolsFromModule
+          (SymbolList
+            (Symbol
+              (PossiblyParameterizedReference
+                (Reference)))
+            (Symbol
+              (PossiblyParameterizedReference
+                (Reference))))
+          (FROM)
+          (GlobalModuleReference
+            (modulereference)
+            (AssignedIdentifier
+              (ObjectIdentifierValue
+                (ObjIdComponentsList
+                  (ObjIdComponents
+                    (number))
+                  (ObjIdComponents
+                    (number))
+                  (ObjIdComponents
+                    (number)))))))
+        (SymbolsFromModule
+          (SymbolList
+            (Symbol
+              (PossiblyParameterizedReference
+                (Reference))))
+          (FROM)
+          (GlobalModuleReference
+            (modulereference))))
+      (AssignmentList
+        (Assignment
+          (TypeAssignment
+            (Type
+              (BuiltinType
+                (IntegerType
+                  (INTEGER))))))))
+    (END)))

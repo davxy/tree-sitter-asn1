@@ -1,0 +1,158 @@
+-- Simplified PKIX definitions (based on RFC 5280)
+PKIX1Explicit88 { iso(1) identified-organization(3) dod(6) internet(1)
+    security(5) mechanisms(5) pkix(7) id-mod(0) id-pkix1-explicit(18) }
+
+DEFINITIONS EXPLICIT TAGS ::=
+
+BEGIN
+
+IMPORTS
+    BMPString, UTF8String
+        FROM PKCS-9 { iso(1) member-body(2) us(840) rsadsi(113549)
+            pkcs(1) pkcs-9(9) modules(0) pkcs-9(1) };
+
+-- Basic certificate structure
+Certificate ::= SEQUENCE {
+    tbsCertificate       TBSCertificate,
+    signatureAlgorithm   AlgorithmIdentifier,
+    signatureValue       BIT STRING
+}
+
+TBSCertificate ::= SEQUENCE {
+    version         [0]  EXPLICIT Version DEFAULT v1,
+    serialNumber         CertificateSerialNumber,
+    signature            AlgorithmIdentifier,
+    issuer               Name,
+    validity             Validity,
+    subject              Name,
+    subjectPublicKeyInfo SubjectPublicKeyInfo,
+    issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
+    subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
+    extensions      [3]  EXPLICIT Extensions OPTIONAL
+}
+
+Version ::= INTEGER { v1(0), v2(1), v3(2) }
+
+CertificateSerialNumber ::= INTEGER
+
+AlgorithmIdentifier ::= SEQUENCE {
+    algorithm               OBJECT IDENTIFIER,
+    parameters              OCTET STRING OPTIONAL
+}
+
+Name ::= CHOICE {
+    rdnSequence  RDNSequence
+}
+
+RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+
+RelativeDistinguishedName ::= SET OF AttributeTypeAndValue
+
+AttributeTypeAndValue ::= SEQUENCE {
+    type    AttributeType,
+    value   AttributeValue
+}
+
+AttributeType ::= OBJECT IDENTIFIER
+
+AttributeValue ::= UTF8String
+
+Validity ::= SEQUENCE {
+    notBefore      Time,
+    notAfter       Time
+}
+
+Time ::= CHOICE {
+    utcTime        UTCTime,
+    generalTime    GeneralizedTime
+}
+
+UTCTime ::= VisibleString
+
+GeneralizedTime ::= VisibleString
+
+UniqueIdentifier ::= BIT STRING
+
+SubjectPublicKeyInfo ::= SEQUENCE {
+    algorithm        AlgorithmIdentifier,
+    subjectPublicKey BIT STRING
+}
+
+Extensions ::= SEQUENCE OF Extension
+
+Extension ::= SEQUENCE {
+    extnID      OBJECT IDENTIFIER,
+    critical    BOOLEAN DEFAULT FALSE,
+    extnValue   OCTET STRING
+}
+
+-- Object Identifier values
+id-ce OBJECT IDENTIFIER ::= { 2 5 29 }
+id-ce-subjectKeyIdentifier OBJECT IDENTIFIER ::= { id-ce 14 }
+id-ce-keyUsage OBJECT IDENTIFIER ::= { id-ce 15 }
+
+-- Key usage bit string
+KeyUsage ::= BIT STRING {
+    digitalSignature        (0),
+    nonRepudiation          (1),
+    keyEncipherment         (2),
+    dataEncipherment        (3),
+    keyAgreement            (4),
+    keyCertSign             (5),
+    cRLSign                 (6),
+    encipherOnly            (7),
+    decipherOnly            (8)
+}
+
+-- Subject alternative name
+SubjectAltName ::= SEQUENCE OF GeneralName
+
+GeneralName ::= CHOICE {
+    rfc822Name                      [1]     IA5String,
+    dNSName                         [2]     IA5String,
+    directoryName                   [4]     Name,
+    uniformResourceIdentifier       [6]     IA5String,
+    iPAddress                       [7]     OCTET STRING,
+    registeredID                    [8]     OBJECT IDENTIFIER
+}
+
+-- Basic Constraints
+BasicConstraints ::= SEQUENCE {
+    cA                      BOOLEAN DEFAULT FALSE,
+    pathLenConstraint       INTEGER (0..MAX) OPTIONAL
+}
+
+-- Authority Key Identifier
+AuthorityKeyIdentifier ::= SEQUENCE {
+    keyIdentifier             [0] OCTET STRING OPTIONAL,
+    authorityCertIssuer       [1] SEQUENCE OF GeneralName OPTIONAL,
+    authorityCertSerialNumber [2] INTEGER OPTIONAL
+}
+
+-- CRL Distribution Points
+CRLDistributionPoints ::= SEQUENCE OF DistributionPoint
+
+DistributionPoint ::= SEQUENCE {
+    distributionPoint       [0]     DistributionPointName OPTIONAL,
+    reasons                 [1]     ReasonFlags OPTIONAL,
+    cRLIssuer               [2]     SEQUENCE OF GeneralName OPTIONAL
+}
+
+DistributionPointName ::= CHOICE {
+    fullName                [0]     SEQUENCE OF GeneralName,
+    nameRelativeToCRLIssuer [1]     RelativeDistinguishedName
+}
+
+ReasonFlags ::= BIT STRING {
+    unused                  (0),
+    keyCompromise           (1),
+    cACompromise            (2),
+    affiliationChanged      (3),
+    superseded              (4),
+    cessationOfOperation    (5),
+    certificateHold         (6),
+    privilegeWithdrawn      (7),
+    aACompromise            (8)
+}
+
+END

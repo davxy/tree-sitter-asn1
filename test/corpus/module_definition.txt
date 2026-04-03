@@ -1,0 +1,94 @@
+==================
+Minimal module
+==================
+
+TestModule DEFINITIONS ::= BEGIN
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (BEGIN)
+    (END)))
+
+==================
+Module with implicit tags
+==================
+
+TestModule DEFINITIONS IMPLICIT TAGS ::= BEGIN
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (TagDefault
+      (IMPLICIT)
+      (TAGS))
+    (BEGIN)
+    (END)))
+
+==================
+Module with automatic tags and extensibility implied
+==================
+
+TestModule DEFINITIONS AUTOMATIC TAGS EXTENSIBILITY IMPLIED ::= BEGIN
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference))
+    (DEFINITIONS)
+    (TagDefault
+      (AUTOMATIC)
+      (TAGS))
+    (ExtensionDefault
+      (EXTENSIBILITY)
+      (IMPLIED))
+    (BEGIN)
+    (END)))
+
+==================
+Module with OID
+==================
+
+TestModule { iso(1) member-body(2) us(840) } DEFINITIONS ::= BEGIN
+END
+
+---
+
+(source_file
+  (ModuleDefinition
+    (ModuleIdentifier
+      (modulereference)
+      (DefinitiveIdentification
+        (DefinitiveOID
+          (DefinitiveObjIdComponentList
+            (DefinitiveObjIdComponent
+              (DefinitiveNameAndNumberForm
+                (lowercased_identifier)
+                (DefinitiveNumberForm
+                  (number))))
+            (DefinitiveObjIdComponent
+              (DefinitiveNameAndNumberForm
+                (lowercased_identifier)
+                (DefinitiveNumberForm
+                  (number))))
+            (DefinitiveObjIdComponent
+              (DefinitiveNameAndNumberForm
+                (lowercased_identifier)
+                (DefinitiveNumberForm
+                  (number))))))))
+    (DEFINITIONS)
+    (BEGIN)
+    (END)))

@@ -1,0 +1,92 @@
+-- Simplified SNMP MIB-style module
+RFC1213-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    Counter, Gauge, IpAddress, TimeTicks
+        FROM RFC1155-SMI
+    DisplayString
+        FROM RFC-1213;
+
+-- System group
+
+sysDescr OBJECT IDENTIFIER ::= { 1 3 6 1 2 1 1 1 }
+sysObjectID OBJECT IDENTIFIER ::= { 1 3 6 1 2 1 1 2 }
+sysUpTime OBJECT IDENTIFIER ::= { 1 3 6 1 2 1 1 3 }
+
+-- Interface table
+
+IfEntry ::= SEQUENCE {
+    ifIndex         INTEGER,
+    ifDescr         DisplayString (SIZE (0..255)),
+    ifType          INTEGER {
+        other(1),
+        regular1822(2),
+        hdh1822(3),
+        ddn-x25(4),
+        rfc877-x25(5),
+        ethernet-csmacd(6),
+        iso88023-csmacd(7),
+        iso88024-tokenBus(8),
+        iso88025-tokenRing(9),
+        iso88026-man(10)
+    },
+    ifMtu           INTEGER,
+    ifSpeed         Gauge,
+    ifPhysAddress   OCTET STRING,
+    ifAdminStatus   INTEGER {
+        up(1),
+        down(2),
+        testing(3)
+    },
+    ifOperStatus    INTEGER {
+        up(1),
+        down(2),
+        testing(3)
+    },
+    ifLastChange    TimeTicks,
+    ifInOctets      Counter,
+    ifInUcastPkts   Counter,
+    ifInNUcastPkts  Counter,
+    ifInDiscards    Counter,
+    ifInErrors      Counter,
+    ifOutOctets     Counter,
+    ifOutUcastPkts  Counter,
+    ifOutNUcastPkts Counter,
+    ifOutDiscards   Counter,
+    ifOutErrors     Counter
+}
+
+-- IP address table
+
+IpAddrEntry ::= SEQUENCE {
+    ipAdEntAddr     IpAddress,
+    ipAdEntIfIndex  INTEGER,
+    ipAdEntNetMask  IpAddress,
+    ipAdEntBcastAddr INTEGER,
+    ipAdEntReasmMaxSize INTEGER (0..65535)
+}
+
+-- TCP connection table
+
+TcpConnEntry ::= SEQUENCE {
+    tcpConnState    INTEGER {
+        closed(1),
+        listen(2),
+        synSent(3),
+        synReceived(4),
+        established(5),
+        finWait1(6),
+        finWait2(7),
+        closeWait(8),
+        lastAck(9),
+        closing(10),
+        timeWait(11),
+        deleteTCB(12)
+    },
+    tcpConnLocalAddress  IpAddress,
+    tcpConnLocalPort     INTEGER (0..65535),
+    tcpConnRemAddress    IpAddress,
+    tcpConnRemPort       INTEGER (0..65535)
+}
+
+END
